@@ -5,12 +5,49 @@ cnv.width = 800;
 cnv.height = 550;
 
 // EVENT STUFF
+let mouseIsPressed = false;
+document.addEventListener("keydown", keydownHandler);
+document.addEventListener("keyup", keyupHandler);  
+document.addEventListener("mousedown", mousedownHandler);
+document.addEventListener("mouseup", mouseupHandler);
+
+function keydownHandler(event) {
+    if (event.code === "KeyA") {
+      player[0].left = true;
+    }
+    if (event.code === "KeyD") {
+      player[0].right = true;
+    }
+}
+  
+function keyupHandler(event) {
+    if (event.code === "KeyA") {
+      player[0].left = false;
+    }
+    if (event.code === "KeyD") {
+      player[0].right = false;
+    }
+}
+
+
+function mousedownHandler() {
+    mouseIsPressed = true;
+}
+
+function mouseupHandler() {
+    mouseIsPressed = false;
+}
+
+// Global Variables
+let borderY = 460;
+let canvasMidWidth = cnv.width / 2;
+let playerZoneMidHeight = borderY + (cnv.height - borderY) / 2;
 
 // Reset Variables
 let circles;
 let player;
 let bullets;
-let borderY = 460;
+let bulletReload = 0;
 
 reset();
 
@@ -34,6 +71,15 @@ function animate() {
 
     // Player Helper Functions
     drawCircles(player, 0);
+    playerControls();
+
+    // Bullet Helper Functions
+    for (let i = 0; i < bullets.length; i++) {
+        drawCircles(bullets, i);
+        bulletMovement(i);
+        bulletDetection(i);
+    }
+    
 
     // Border
     ctx.fillStyle = `white`;
@@ -55,20 +101,64 @@ function drawCircles(shape, n) {
     if (shape === player) {
         ctx.fillStyle = shape[n].circleColor;
         ctx.beginPath();
-        ctx.arc(shape[n].x, shape[n].y, shape[n].r, shape[n].startAngle, shape[n].endAngle * Math.PI);
+        ctx.arc(shape[n].circleX, shape[n].circleY, shape[n].circleR, shape[n].startAngle, shape[n].endAngle * Math.PI);
         ctx.fill();
 
         ctx.strokeStyle = shape[n].lineColor;
-        ctx.lineWidth = 5;
+        ctx.lineWidth = shape[n].lineWidth;
         ctx.beginPath();
-        ctx.moveTo(75, 50); // Start at (x1, y1)
-        ctx.lineTo(200, 100); // Go to (x2, y2)
-        ctx.stroke(); // Draw line
+        ctx.moveTo(shape[n].lineX, shape[n].lineY);
+        ctx.lineTo(shape[n].lineX1, shape[n].lineY1);
+        ctx.stroke();
+    }
+
+    if (shape === bullets) {
+        ctx.fillStyle = shape[n].color;
+        ctx.beginPath();
+        ctx.arc(shape[n].x, shape[n].y, shape[n].r, shape[n].startAngle, shape[n].endAngle * Math.PI);
+        ctx.fill();
     }
 }
 
-function playerMovement() {
+function playerControls() {
+    playerMovement();
+    playerShoot();
+}
 
+function playerMovement() {
+    if (player[0].left === true) {
+        player[0].circleX -= player[0].xVelocity;
+        player[0].lineX -= player[0].xVelocity;
+        player[0].lineX1 -= player[0].xVelocity;
+    }
+
+    if (player[0].right === true) {
+        player[0].circleX += player[0].xVelocity;
+        player[0].lineX += player[0].xVelocity;
+        player[0].lineX1 += player[0].xVelocity;
+    }
+
+    if (player[0].circleX < 0) {
+        player[0].circleX = 0;
+        player[0].lineX = 0;
+        player[0].lineX1 = 0;
+    } else if (player[0].circleX > cnv.width) {
+        player[0].circleX = cnv.width;
+        player[0].lineX = cnv.width;
+        player[0].lineX1 = cnv.width;
+    }
+}
+
+function playerShoot() {
+    if (mouseIsPressed === true && bulletReload === 0) {
+        bullets.push(newBullet(player[0].circleX, player[0].circleY, 5, "white", 0, 2, -10));
+        bulletReload = 15;
+    }
+    bulletReload--;
+
+    if (bulletReload < 0) {
+        bulletReload = 0;
+    }
 }
 
 function moveCircles(n) {
@@ -90,6 +180,27 @@ function moveCircles(n) {
     }
 }
 
+function bulletMovement(n) {
+    bullets[n].y += bullets[n].velocity;
+}
+
+function bulletDetection(n) {
+    if (bullets[n].y < 0) {
+        bullets.splice(n, 1);
+    } else {
+        for (let i = 0; i < circles.length; i++) {
+            let run = circles[i].x - bullets[n].x;
+            let rise = circles[i].y - bullets[n].y;
+            let d = Math.sqrt(Math.pow(run, 2) + Math.pow(rise, 2));
+    
+            if (d < bullets[n].r + circles[i].r) {
+                circles.splice(i, 1);
+                bullets.splice(n, 1);
+            }
+        }  
+    }
+}
+
 function newCircle(x1, y1, r1, lineWidth1, startAngle1, endAngle1, xVelocity1, yVelocity1, color1) {
     return {
             x: x1,
@@ -104,7 +215,7 @@ function newCircle(x1, y1, r1, lineWidth1, startAngle1, endAngle1, xVelocity1, y
         };
 }
 
-function newPlayer(circleX1, circleY1, circleR1, startAngle1, endAngle1, circleColor1, xVelocity1, lineX2, lineY2, lineX3, lineY3, lineWidth1,lineColor1) {
+function newPlayer(circleX1, circleY1, circleR1, startAngle1, endAngle1, circleColor1, lineX2, lineY2, lineX3, lineY3, lineWidth1, lineColor1, xVelocity1, left1, right1, shoot1) {
     return {
         circleX: circleX1,
         circleY: circleY1,
@@ -112,14 +223,29 @@ function newPlayer(circleX1, circleY1, circleR1, startAngle1, endAngle1, circleC
         startAngle: startAngle1,
         endAngle: endAngle1,
         circleColor: circleColor1,
-        xVelocity: xVelocity1,
         lineX: lineX2,
         lineY: lineY2,
         lineX1: lineX3,
         lineY1: lineY3,
         lineWidth: lineWidth1,
-        lineColor: lineColor1
-        }
+        lineColor: lineColor1,
+        xVelocity: xVelocity1,
+        left: left1,
+        right: right1,
+        shoot: shoot1
+    }
+}
+
+function newBullet(x1, y1, r1, color1, startAngle1, endAngle1, velocity1) {
+    return {
+        x: x1,
+        y: y1,
+        r: r1,
+        color: color1,
+        startAngle: startAngle1,
+        endAngle: endAngle1,
+        velocity: velocity1
+    }
 }
 
 function reset() {
@@ -129,5 +255,7 @@ function reset() {
     }
 
     player = [];
-    player.push(newPlayer(cnv.width / 2, 500, 25, 0, 2, "white", 5));
+    player.push(newPlayer(canvasMidWidth, playerZoneMidHeight, 25, 0, 2, "white", canvasMidWidth, playerZoneMidHeight, canvasMidWidth, playerZoneMidHeight - 25, 5, "red", 5, false, false, false));
+
+    bullets = [];
 }
