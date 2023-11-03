@@ -203,16 +203,16 @@ function bulletDetection(n) {
 
 function newCircle(x1, y1, r1, lineWidth1, startAngle1, endAngle1, xVelocity1, yVelocity1, color1) {
     return {
-            x: x1,
-            y: y1,
-            r: r1,
-            lineWidth: lineWidth1,
-            startAngle: startAngle1,
-            endAngle: endAngle1,
-            xVelocity: xVelocity1,
-            yVelocity: yVelocity1,
-            color: color1
-        };
+        x: x1,
+        y: y1,
+        r: r1,
+        lineWidth: lineWidth1,
+        startAngle: startAngle1,
+        endAngle: endAngle1,
+        xVelocity: xVelocity1,
+        yVelocity: yVelocity1,
+        color: color1
+    };
 }
 
 function newPlayer(circleX1, circleY1, circleR1, startAngle1, endAngle1, circleColor1, lineX2, lineY2, lineX3, lineY3, lineWidth1, lineColor1, xVelocity1, left1, right1, shoot1) {
@@ -233,7 +233,7 @@ function newPlayer(circleX1, circleY1, circleR1, startAngle1, endAngle1, circleC
         left: left1,
         right: right1,
         shoot: shoot1
-    }
+    };
 }
 
 function newBullet(x1, y1, r1, color1, startAngle1, endAngle1, velocity1) {
@@ -245,7 +245,7 @@ function newBullet(x1, y1, r1, color1, startAngle1, endAngle1, velocity1) {
         startAngle: startAngle1,
         endAngle: endAngle1,
         velocity: velocity1
-    }
+    };
 }
 
 function reset() {
