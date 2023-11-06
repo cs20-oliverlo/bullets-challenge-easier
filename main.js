@@ -51,11 +51,6 @@ let bulletReload = 0;
 
 reset();
 
-// Event Stuff
-// document.addEventListener("mousedown", mousedownHandler);
-// document.addEventListener("mouseup", mouseupHandler);
-
-
 // Animation
 requestAnimationFrame(animate);
 function animate() {
