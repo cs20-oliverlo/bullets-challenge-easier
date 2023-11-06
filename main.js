@@ -191,11 +191,12 @@ function bulletDetection(n) {
         for (let i = 0; i < circles.length; i++) {
             let run = circles[i].x - bullets[n].x;
             let rise = circles[i].y - bullets[n].y;
-            let d = Math.sqrt(Math.pow(run, 2) + Math.pow(rise, 2));
+            let d = Math.sqrt(run ** 2 + rise ** 2);
     
             if (d < bullets[n].r + circles[i].r) {
                 circles.splice(i, 1);
                 bullets.splice(n, 1);
+                return;
             }
         }  
     }
