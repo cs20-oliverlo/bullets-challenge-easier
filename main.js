@@ -44,8 +44,8 @@ let canvasMidWidth = cnv.width / 2;
 let playerZoneMidHeight = borderY + (cnv.height - borderY) / 2;
 
 // Reset Variables
-let circles;
 let player;
+let circles;
 let bullets;
 
 reset();
