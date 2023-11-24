@@ -13,19 +13,19 @@ document.addEventListener("mouseup", mouseupHandler);
 
 function keydownHandler(event) {
     if (event.code === "KeyA") {
-      player[0].left = true;
+      player.left = true;
     }
     if (event.code === "KeyD") {
-      player[0].right = true;
+      player.right = true;
     }
 }
   
 function keyupHandler(event) {
     if (event.code === "KeyA") {
-      player[0].left = false;
+      player.left = false;
     }
     if (event.code === "KeyD") {
-      player[0].right = false;
+      player.right = false;
     }
 }
 
@@ -47,7 +47,6 @@ let playerZoneMidHeight = borderY + (cnv.height - borderY) / 2;
 let circles;
 let player;
 let bullets;
-let bulletReload = 0;
 
 reset();
 
@@ -56,7 +55,7 @@ requestAnimationFrame(animate);
 function animate() {
     // Fill Background
     ctx.fillStyle = `rgb(50, 50, 50)`;
-    ctx.fillRect(0, 0, cnv.width, cnv. height);
+    ctx.fillRect(0, 0, cnv.width, cnv.height);
 
     // Food Helper Functions
     for (let i = 0; i < circles.length; i++) {
@@ -65,7 +64,7 @@ function animate() {
     }
 
     // Player Helper Functions
-    drawCircles(player, 0);
+    drawCircles(player);
     playerControls();
 
     // Bullet Helper Functions
@@ -94,16 +93,16 @@ function drawCircles(shape, n) {
     }
     
     if (shape === player) {
-        ctx.fillStyle = shape[n].circleColor;
+        ctx.fillStyle = shape.circleColor;
         ctx.beginPath();
-        ctx.arc(shape[n].circleX, shape[n].circleY, shape[n].circleR, shape[n].startAngle, shape[n].endAngle * Math.PI);
+        ctx.arc(shape.circleX, shape.circleY, shape.circleR, shape.startAngle, shape.endAngle * Math.PI);
         ctx.fill();
 
-        ctx.strokeStyle = shape[n].lineColor;
-        ctx.lineWidth = shape[n].lineWidth;
+        ctx.strokeStyle = shape.lineColor;
+        ctx.lineWidth = shape.lineWidth;
         ctx.beginPath();
-        ctx.moveTo(shape[n].lineX, shape[n].lineY);
-        ctx.lineTo(shape[n].lineX1, shape[n].lineY1);
+        ctx.moveTo(shape.lineX, shape.lineY);
+        ctx.lineTo(shape.lineX1, shape.lineY1);
         ctx.stroke();
     }
 
@@ -121,38 +120,38 @@ function playerControls() {
 }
 
 function playerMovement() {
-    if (player[0].left === true) {
-        player[0].circleX -= player[0].xVelocity;
-        player[0].lineX -= player[0].xVelocity;
-        player[0].lineX1 -= player[0].xVelocity;
+    if (player.left === true) {
+        player.circleX -= player.xVelocity;
+        player.lineX -= player.xVelocity;
+        player.lineX1 -= player.xVelocity;
     }
 
-    if (player[0].right === true) {
-        player[0].circleX += player[0].xVelocity;
-        player[0].lineX += player[0].xVelocity;
-        player[0].lineX1 += player[0].xVelocity;
+    if (player.right === true) {
+        player.circleX += player.xVelocity;
+        player.lineX += player.xVelocity;
+        player.lineX1 += player.xVelocity;
     }
 
-    if (player[0].circleX < 0) {
-        player[0].circleX = 0;
-        player[0].lineX = 0;
-        player[0].lineX1 = 0;
-    } else if (player[0].circleX > cnv.width) {
-        player[0].circleX = cnv.width;
-        player[0].lineX = cnv.width;
-        player[0].lineX1 = cnv.width;
+    if (player.circleX < 0) {
+        player.circleX = 0;
+        player.lineX = 0;
+        player.lineX1 = 0;
+    } else if (player.circleX > cnv.width) {
+        player.circleX = cnv.width;
+        player.lineX = cnv.width;
+        player.lineX1 = cnv.width;
     }
 }
 
 function playerShoot() {
-    if (mouseIsPressed === true && bulletReload === 0) {
-        bullets.push(newBullet(player[0].circleX, player[0].circleY, 5, "white", 0, 2, -10));
-        bulletReload = 15;
+    if (mouseIsPressed === true && player.reload === 0) {
+        bullets.push(newBullet(player.circleX, player.circleY, 5, "white", 0, 2, -10));
+        player.reload = 15;
     }
-    bulletReload--;
+    player.reload--;
 
-    if (bulletReload < 0) {
-        bulletReload = 0;
+    if (player.reload < 0) {
+        player.reload = 0;
     }
 }
 
@@ -211,27 +210,6 @@ function newCircle(x1, y1, r1, lineWidth1, startAngle1, endAngle1, xVelocity1, y
     };
 }
 
-function newPlayer(circleX1, circleY1, circleR1, startAngle1, endAngle1, circleColor1, lineX2, lineY2, lineX3, lineY3, lineWidth1, lineColor1, xVelocity1, left1, right1, shoot1) {
-    return {
-        circleX: circleX1,
-        circleY: circleY1,
-        circleR: circleR1,
-        startAngle: startAngle1,
-        endAngle: endAngle1,
-        circleColor: circleColor1,
-        lineX: lineX2,
-        lineY: lineY2,
-        lineX1: lineX3,
-        lineY1: lineY3,
-        lineWidth: lineWidth1,
-        lineColor: lineColor1,
-        xVelocity: xVelocity1,
-        left: left1,
-        right: right1,
-        shoot: shoot1
-    };
-}
-
 function newBullet(x1, y1, r1, color1, startAngle1, endAngle1, velocity1) {
     return {
         x: x1,
@@ -250,8 +228,25 @@ function reset() {
         circles.push(newCircle(randomInt(50, cnv.width - 50), randomInt(50, borderY - 50), randomInt(10, 50), 3, 0, 2, randomInt(-5, 5), randomInt(-5, 5), `rgb(${randomInt(0, 255)}, ${randomInt(0, 255)}, ${randomInt(0, 255)})`));
     }
 
-    player = [];
-    player.push(newPlayer(canvasMidWidth, playerZoneMidHeight, 25, 0, 2, "white", canvasMidWidth, playerZoneMidHeight, canvasMidWidth, playerZoneMidHeight - 25, 5, "red", 5, false, false, false));
+    player = {
+        circleX: canvasMidWidth,
+        circleY: playerZoneMidHeight,
+        circleR: 25,
+        startAngle: 0,
+        endAngle: 2,
+        circleColor: "white",
+        lineX: canvasMidWidth,
+        lineY: playerZoneMidHeight,
+        lineX1: canvasMidWidth,
+        lineY1: playerZoneMidHeight - 25,
+        lineWidth: 5,
+        lineColor: "red",
+        xVelocity: 5,
+        left: false,
+        right: false,
+        shoot: false,
+        reload: 0
+    };
 
     bullets = [];
 }
