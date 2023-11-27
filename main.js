@@ -95,14 +95,14 @@ function drawCircles(shape, n) {
     if (shape === player) {
         ctx.fillStyle = shape.circleColor;
         ctx.beginPath();
-        ctx.arc(shape.circleX, shape.circleY, shape.circleR, shape.startAngle, shape.endAngle * Math.PI);
+        ctx.arc(shape.xCircle, shape.yCircle, shape.rCircle, shape.startAngle, shape.endAngle * Math.PI);
         ctx.fill();
 
         ctx.strokeStyle = shape.lineColor;
         ctx.lineWidth = shape.lineWidth;
         ctx.beginPath();
-        ctx.moveTo(shape.lineX, shape.lineY);
-        ctx.lineTo(shape.lineX1, shape.lineY1);
+        ctx.moveTo(shape.xLine, shape.yLine);
+        ctx.lineTo(shape.x1Line, shape.y1Line);
         ctx.stroke();
     }
 
@@ -121,31 +121,31 @@ function playerControls() {
 
 function playerMovement() {
     if (player.left === true) {
-        player.circleX -= player.xVelocity;
-        player.lineX -= player.xVelocity;
-        player.lineX1 -= player.xVelocity;
+        player.xCircle -= player.xVelocity;
+        player.xLine -= player.xVelocity;
+        player.x1Line -= player.xVelocity;
     }
 
     if (player.right === true) {
-        player.circleX += player.xVelocity;
-        player.lineX += player.xVelocity;
-        player.lineX1 += player.xVelocity;
+        player.xCircle += player.xVelocity;
+        player.xLine += player.xVelocity;
+        player.x1Line += player.xVelocity;
     }
 
-    if (player.circleX < 0) {
-        player.circleX = 0;
-        player.lineX = 0;
-        player.lineX1 = 0;
-    } else if (player.circleX > cnv.width) {
-        player.circleX = cnv.width;
-        player.lineX = cnv.width;
-        player.lineX1 = cnv.width;
+    if (player.xCircle < 0) {
+        player.xCircle = 0;
+        player.xLine = 0;
+        player.x1Line = 0;
+    } else if (player.xCircle > cnv.width) {
+        player.xCircle = cnv.width;
+        player.xLine = cnv.width;
+        player.x1Line = cnv.width;
     }
 }
 
 function playerShoot() {
     if (mouseIsPressed === true && player.reload === 0) {
-        bullets.push(newBullet(player.circleX, player.circleY, 5, "white", 0, 2, -10));
+        bullets.push(newBullet(player.xCircle, player.yCircle, 5, "white", 0, 2, -10));
         player.reload = 15;
     }
     player.reload--;
@@ -224,16 +224,16 @@ function newBullet(x1, y1, r1, color1, startAngle1, endAngle1, velocity1) {
 
 function reset() {
     player = {
-        circleX: canvasMidWidth,
-        circleY: playerZoneMidHeight,
-        circleR: 25,
+        xCircle: canvasMidWidth,
+        yCircle: playerZoneMidHeight,
+        rCircle: 25,
         startAngle: 0,
         endAngle: 2,
         circleColor: "white",
-        lineX: canvasMidWidth,
-        lineY: playerZoneMidHeight,
-        lineX1: canvasMidWidth,
-        lineY1: playerZoneMidHeight - 25,
+        xLine: canvasMidWidth,
+        yLine: playerZoneMidHeight,
+        x1Line: canvasMidWidth,
+        y1Line: playerZoneMidHeight - 25,
         lineWidth: 5,
         lineColor: "red",
         xVelocity: 5,
