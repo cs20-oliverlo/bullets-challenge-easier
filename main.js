@@ -223,11 +223,6 @@ function newBullet(x1, y1, r1, color1, startAngle1, endAngle1, velocity1) {
 }
 
 function reset() {
-    circles = [];
-    for (let i = 0; i < 15; i++) {
-        circles.push(newCircle(randomInt(50, cnv.width - 50), randomInt(50, borderY - 50), randomInt(10, 50), 3, 0, 2, randomInt(-5, 5), randomInt(-5, 5), `rgb(${randomInt(0, 255)}, ${randomInt(0, 255)}, ${randomInt(0, 255)})`));
-    }
-
     player = {
         circleX: canvasMidWidth,
         circleY: playerZoneMidHeight,
@@ -247,6 +242,11 @@ function reset() {
         shoot: false,
         reload: 0
     };
+
+    circles = [];
+    for (let i = 0; i < 15; i++) {
+        circles.push(newCircle(randomInt(50, cnv.width - 50), randomInt(50, borderY - 50), randomInt(10, 50), 3, 0, 2, randomInt(-5, 5), randomInt(-5, 5), `rgb(${randomInt(0, 255)}, ${randomInt(0, 255)}, ${randomInt(0, 255)})`));
+    }
 
     bullets = [];
 }
